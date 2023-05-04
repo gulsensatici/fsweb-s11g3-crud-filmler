@@ -1,54 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
-
 import axios from "axios";
 
-const EditMovieForm = (props) => {
-  const { push } = useHistory();
-const {id}= useParams();
-  const { setMovies } = props;
-  const [movie, setMovie] = useState({
-    title: "",
-    director: "",
-    genre: "",
-    metascore: 0,
-    description: "",
-  });
-  useEffect(()=>{
-    axios
-    .get("http://localhost:9000/api/movies/" )
-    .then((res)=>{ setMovie(res.data);
-       console.log(res.data);
-      })
-    .catch((err)=>console.log(err))
-  }, [])
+function AddMovieForm(props) {
 
-  const handleChange = (e) => {
-    setMovie({
-      ...movie,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios
-      .put(`http://localhost:9000/api/movies/${id}`, movie)
-      .then((res) => {
-        setMovies(res.data);
-        push("/movies/");
-      })
-      .catch((err) => {
-        console.log(err);
+    const { push}=useHistory();
+    const [movie, setMovie] = useState({
+        title: "",
+        director: "",
+        genre: "",
+        metascore: 0,
+        description: "",
       });
-  };
+     
+      const handleChange = (e) => {
+        setMovie({
+          ...movie,
+          [e.target.name]: e.target.value,
+        });
+      };
+    
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        axios
+          .put(`http://localhost:9000/api/movies/`, movie)
+          .then((res) => {
+            console.log(res.data);
+            props.setMovie(res.data);
+            push("/movies/");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+      const { title, director, genre, metascore, description } = movie;
 
-  const { title, director, genre, metascore, description } = movie;
 
-  return (
-    <div className="bg-white rounded-md shadow flex-1">
-      <form onSubmit={handleSubmit}>
+
+    return ( <div className="bg-white rounded-md shadow flex-1">
+ <form onSubmit={handleSubmit}>
         <div className="p-5 pb-3 border-b border-zinc-200">
           <h4 className="text-xl font-bold">Düzenleniyor <strong>{movie.title}</strong></h4>
         </div>
@@ -112,8 +103,7 @@ const {id}= useParams();
           </button>
         </div>
       </form>
-    </div>
-  );
-};
+    </div> );
+}
 
-export default EditMovieForm;
+export default AddMovieForm;
